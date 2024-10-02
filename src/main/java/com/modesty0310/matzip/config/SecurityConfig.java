@@ -37,7 +37,7 @@ public class SecurityConfig {
         // security 없이 가능 router
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login", "/", "/sign-up").permitAll()
+                        .requestMatchers("/login", "/", "/auth/signup").permitAll()
                         .anyRequest().authenticated());
 
         // session state less 설정
