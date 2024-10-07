@@ -4,7 +4,7 @@
 
 <mapper namespace="com.modesty0310.matzip.mapper.AuthMapper">
     <!-- 사용자 추가 -->
-    <insert id="signUp" parameterType="com.modesty0310.matzip.dto.auth.SignupDTO">
+    <insert id="signUp" parameterType="com.modesty0310.matzip.dto.auth.request.SignupRequestDTO">
         INSERT INTO user (email, password, login_type)
         VALUES (#{email}, #{password}, #{loginType})
     </insert>
@@ -15,4 +15,17 @@
         FROM user
         WHERE email = #{email}
     </select>
+
+    <!-- 이메일로 유저 정보 가져오기 -->
+    <select id="getUserByEmail" parameterType="String" resultType="com.modesty0310.matzip.entity.User">
+        SELECT *
+        FROM user
+        WHERE email = #{email}
+    </select>
+
+    <update id="updateHashedRefreshToken" parameterType="com.modesty0310.matzip.dto.auth.request.UpdateHashedRefreshTokenDTO">
+        UPDATE user
+        SET hashed_refresh_token = #{hashedRefreshToken}
+        WHERE id = #{userId}
+    </update>
 </mapper>

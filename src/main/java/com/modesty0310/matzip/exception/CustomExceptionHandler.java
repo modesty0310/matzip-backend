@@ -37,4 +37,11 @@ public class CustomExceptionHandler {
         ErrorDTO errorDTO = new ErrorDTO(message, "Bad Request", HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorDTO> handleIllegalArgumentException(RuntimeException ex) {
+        // ErrorDTO 객체를 생성하여 리턴
+        ErrorDTO errorDTO = new ErrorDTO(ex.getMessage(), "Bad Request", HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
+    }
 }
