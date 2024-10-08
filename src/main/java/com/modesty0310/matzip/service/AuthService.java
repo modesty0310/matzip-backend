@@ -36,7 +36,7 @@ public class AuthService {
         authMapper.signUp(signupRequestDTO);
     }
 
-    public SigninResponseDTO signin(SigninRequestDTO signinRequestDTO) {
+    public SigninResponseDTO signIn(SigninRequestDTO signinRequestDTO) {
 
         String email = signinRequestDTO.getEmail();
         String password = signinRequestDTO.getPassword();
