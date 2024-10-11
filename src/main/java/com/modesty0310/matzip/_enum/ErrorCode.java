@@ -7,7 +7,8 @@ public enum ErrorCode {
     INVALID_EMAIL_OR_PASSWORD("이메일 또는 비밀번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED),
     INVALID_REQUEST("잘못된 요청입니다.", HttpStatus.BAD_REQUEST),
     FORBIDDEN("권한이 없습니다.", HttpStatus.FORBIDDEN),
-    INVALID_JWT_TOKEN("권한이 없습니다.", HttpStatus.UNAUTHORIZED)
+    INVALID_JWT_TOKEN("권한이 없습니다.", HttpStatus.UNAUTHORIZED),
+    NOTFOUND_USER("존재하지 않는 유저 입니다.", HttpStatus.NOT_FOUND)
     ;
 
     private final String message;

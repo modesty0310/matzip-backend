@@ -1,5 +1,6 @@
 package com.modesty0310.matzip.controller;
 
+import com.modesty0310.matzip.dto.auth.request.EditProfileDTO;
 import com.modesty0310.matzip.dto.auth.request.SigninRequestDTO;
 import com.modesty0310.matzip.dto.auth.request.SignupRequestDTO;
 import com.modesty0310.matzip.dto.auth.response.GetProfileDTO;
@@ -39,6 +40,12 @@ public class AuthController {
     public GetProfileDTO getProfile(HttpServletRequest request) {
         User user = (User) request.getAttribute("user");
         return new GetProfileDTO(user);
+    }
+
+    @PatchMapping("/me")
+    public void editProfile(HttpServletRequest request, @Valid @RequestBody EditProfileDTO editProfileDTO) {
+        User user = (User) request.getAttribute("user");
+        authService.editProfile(editProfileDTO, user.getId());
     }
 
     @PostMapping("/logout")

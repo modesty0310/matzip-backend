@@ -2,6 +2,7 @@ package com.modesty0310.matzip.service;
 
 import com.modesty0310.matzip._enum.ErrorCode;
 import com.modesty0310.matzip.config.JwtTokenProvider;
+import com.modesty0310.matzip.dto.auth.request.EditProfileDTO;
 import com.modesty0310.matzip.dto.auth.request.SigninRequestDTO;
 import com.modesty0310.matzip.dto.auth.request.SignupRequestDTO;
 import com.modesty0310.matzip.dto.auth.request.UpdateHashedRefreshTokenDTO;
@@ -97,5 +98,15 @@ public class AuthService {
 
     public void logout(Long userId) {
         authMapper.deleteHashedRefreshToken(userId);
+    }
+
+    public void editProfile(EditProfileDTO editProfileDTO, Long userId) {
+        User user = authMapper.getUserById(userId);
+
+        if (user == null) {
+            throw new CustomException(ErrorCode.NOTFOUND_USER);
+        }
+
+        authMapper.editProfile(editProfileDTO, userId);
     }
 }
