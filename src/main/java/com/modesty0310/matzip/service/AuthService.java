@@ -1,15 +1,20 @@
 package com.modesty0310.matzip.service;
 
+import com.modesty0310.matzip._enum.ErrorCode;
 import com.modesty0310.matzip.config.JwtTokenProvider;
 import com.modesty0310.matzip.dto.auth.request.SigninRequestDTO;
 import com.modesty0310.matzip.dto.auth.request.SignupRequestDTO;
 import com.modesty0310.matzip.dto.auth.request.UpdateHashedRefreshTokenDTO;
+import com.modesty0310.matzip.dto.auth.response.RefreshTokenDTO;
 import com.modesty0310.matzip.dto.auth.response.SigninResponseDTO;
 import com.modesty0310.matzip.entity.User;
+import com.modesty0310.matzip.exception.CustomException;
 import com.modesty0310.matzip.mapper.AuthMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -27,13 +32,24 @@ public class AuthService {
         Boolean isExists = authMapper.existsByEmail(email);
 
         if (isExists) {
-            return;
+            throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
         signupRequestDTO.setPassword(bCryptPasswordEncoder.encode(password));
         signupRequestDTO.setLoginType("email");
 
         authMapper.signUp(signupRequestDTO);
+    }
+
+    // refreshToken을 DB에 저장하거나 업데이트하는 로직
+    private void updateRefreshToken(String refreshToken, Long userId) {
+        String hashedRefreshToken = bCryptPasswordEncoder.encode(refreshToken);
+        UpdateHashedRefreshTokenDTO updateHashedRefreshTokenDTO = UpdateHashedRefreshTokenDTO
+                .builder()
+                .userId(userId)
+                .hashedRefreshToken(hashedRefreshToken)
+                .build();
+        authMapper.updateHashedRefreshToken(updateHashedRefreshTokenDTO);
     }
 
     public SigninResponseDTO signIn(SigninRequestDTO signinRequestDTO) {
@@ -46,23 +62,33 @@ public class AuthService {
 
         // 비밀번호 확인
         if (user == null || !bCryptPasswordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.INVALID_EMAIL_OR_PASSWORD);
         }
 
         // JWT 토큰 생성
         String accessToken = jwtTokenProvider.generateToken(email, true);
         String refreshToken = jwtTokenProvider.generateToken(email, false);
 
-        // refreshToken을 DB에 저장하거나 업데이트하는 로직 추가 필요
-        String hashedRefreshToken = bCryptPasswordEncoder.encode(refreshToken);
-        UpdateHashedRefreshTokenDTO updateHashedRefreshTokenDTO = UpdateHashedRefreshTokenDTO
-                .builder()
-                .userId(user.getId())
-                .hashedRefreshToken(hashedRefreshToken)
-                .build();
-        authMapper.updateHashedRefreshToken(updateHashedRefreshTokenDTO);
+        updateRefreshToken(refreshToken, user.getId());
 
         return SigninResponseDTO
+                .builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    public RefreshTokenDTO refresh(User user) {
+        String accessToken = jwtTokenProvider.generateToken(user.getEmail(), true);
+        String refreshToken = jwtTokenProvider.generateToken(user.getEmail(), false);
+
+        if(user.getHashedRefreshToken() == null) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        updateRefreshToken(refreshToken, user.getId());
+
+        return RefreshTokenDTO
                 .builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)

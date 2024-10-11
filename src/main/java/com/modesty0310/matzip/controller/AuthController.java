@@ -2,6 +2,8 @@ package com.modesty0310.matzip.controller;
 
 import com.modesty0310.matzip.dto.auth.request.SigninRequestDTO;
 import com.modesty0310.matzip.dto.auth.request.SignupRequestDTO;
+import com.modesty0310.matzip.dto.auth.response.GetProfileDTO;
+import com.modesty0310.matzip.dto.auth.response.RefreshTokenDTO;
 import com.modesty0310.matzip.dto.auth.response.SigninResponseDTO;
 import com.modesty0310.matzip.entity.User;
 import com.modesty0310.matzip.service.AuthService;
@@ -28,10 +30,14 @@ public class AuthController {
     }
 
     @GetMapping("/refresh")
-    public String getRefreshToken(HttpServletRequest request) {
+    public RefreshTokenDTO getRefreshToken(HttpServletRequest request) {
         User userDetails = (User) request.getAttribute("user");
-        String email = userDetails.getEmail();  // 이메일 또는 사용자 ID를 가져옴
-        System.out.println(email);
-        return "1234";
+        return authService.refresh(userDetails);
+    }
+
+    @GetMapping("/me")
+    public GetProfileDTO getProfile(HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
+        return new GetProfileDTO(user);
     }
 }
