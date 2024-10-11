@@ -38,6 +38,7 @@ public class AuthController {
     @GetMapping("/me")
     public GetProfileDTO getProfile(HttpServletRequest request) {
         User user = (User) request.getAttribute("user");
+        System.out.println(user.getId());
         return new GetProfileDTO(user);
     }
 }

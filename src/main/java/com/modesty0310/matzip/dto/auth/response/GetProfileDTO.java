@@ -3,11 +3,14 @@ package com.modesty0310.matzip.dto.auth.response;
 import com.modesty0310.matzip.entity.Favorite;
 import com.modesty0310.matzip.entity.Post;
 import com.modesty0310.matzip.entity.User;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Getter
+@Setter
 public class GetProfileDTO {
     private Long id;
     private String loginType;
