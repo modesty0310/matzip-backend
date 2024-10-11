@@ -15,4 +15,6 @@ public interface AuthMapper {
     User getUserByEmail(String email);
 
     void updateHashedRefreshToken(UpdateHashedRefreshTokenDTO updateHashedRefreshTokenDTO);
+
+    void deleteHashedRefreshToken(Long userId);
 }

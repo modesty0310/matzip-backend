@@ -94,4 +94,8 @@ public class AuthService {
                 .refreshToken(refreshToken)
                 .build();
     }
+
+    public void logout(Long userId) {
+        authMapper.deleteHashedRefreshToken(userId);
+    }
 }

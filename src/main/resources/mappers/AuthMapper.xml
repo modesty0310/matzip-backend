@@ -28,4 +28,10 @@
         SET hashed_refresh_token = #{hashedRefreshToken}
         WHERE id = #{userId}
     </update>
+
+    <update id="deleteHashedRefreshToken" parameterType="String">
+        UPDATE user
+        SET hashed_refresh_token = null
+        WHERE id = #{userId}
+    </update>
 </mapper>
