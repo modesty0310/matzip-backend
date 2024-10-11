@@ -29,6 +29,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String requestURI = request.getRequestURI();
+
+        // auth/signin 및 auth/signup 경로는 인증 처리 생략
+        if (requestURI.equals("/auth/signin") || requestURI.equals("/auth/signup")) {
+            filterChain.doFilter(request, response); // 다음 필터로 전파
+            return; // 필터 종료
+        }
+
         try {
             String authorizationHeader = request.getHeader("Authorization");
 
@@ -67,7 +75,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (CustomException e) {
             // Set the response status and content for unauthorized access
-            System.out.println(e.getMessage());
             response.setStatus(e.getStatus().value()); // 401
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8"); // 인코딩 설정
