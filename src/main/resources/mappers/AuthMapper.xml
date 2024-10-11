@@ -35,7 +35,7 @@
         WHERE id = #{userId}
     </update>
 
-    <update id="deleteHashedRefreshToken" parameterType="String">
+    <update id="deleteHashedRefreshToken" parameterType="Long">
         UPDATE user
         SET hashed_refresh_token = null
         WHERE id = #{userId}
@@ -47,4 +47,9 @@
             image_uri = #{editProfileDTO.imageUri}
         WHERE id = #{userId}
     </update>
+
+    <delete id="deleteAccount" parameterType="Long">
+        DELETE FROM user
+        WHERE id = #{userId}
+    </delete>
 </mapper>

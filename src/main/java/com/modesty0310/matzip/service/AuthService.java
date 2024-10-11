@@ -109,4 +109,8 @@ public class AuthService {
 
         authMapper.editProfile(editProfileDTO, userId);
     }
+
+    public void deleteAccount(Long userId) {
+        authMapper.deleteAccount(userId);
+    }
 }

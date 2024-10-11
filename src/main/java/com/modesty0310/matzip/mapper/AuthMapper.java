@@ -23,4 +23,6 @@ public interface AuthMapper {
     void deleteHashedRefreshToken(Long userId);
 
     void editProfile(@Param("editProfileDTO") EditProfileDTO editProfileDTO, @Param("userId") Long userId);
+
+    void deleteAccount(Long userId);
 }

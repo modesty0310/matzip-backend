@@ -53,4 +53,10 @@ public class AuthController {
         User user = (User) request.getAttribute("user");
         authService.logout(user.getId());
     }
+
+    @DeleteMapping("/me")
+    public void delete(HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
+        authService.deleteAccount(user.getId());
+    }
 }
