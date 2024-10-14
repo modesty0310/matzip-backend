@@ -25,4 +25,6 @@ public interface AuthMapper {
     void editProfile(@Param("editProfileDTO") EditProfileDTO editProfileDTO, @Param("userId") Long userId);
 
     void deleteAccount(Long userId);
+
+    void updateCategory(User user);
 }

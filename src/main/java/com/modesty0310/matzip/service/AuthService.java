@@ -1,6 +1,7 @@
 package com.modesty0310.matzip.service;
 
 import com.modesty0310.matzip._enum.ErrorCode;
+import com.modesty0310.matzip._enum.MarkerColor;
 import com.modesty0310.matzip.config.JwtTokenProvider;
 import com.modesty0310.matzip.dto.auth.request.EditProfileDTO;
 import com.modesty0310.matzip.dto.auth.request.SigninRequestDTO;
@@ -8,6 +9,7 @@ import com.modesty0310.matzip.dto.auth.request.SignupRequestDTO;
 import com.modesty0310.matzip.dto.auth.request.UpdateHashedRefreshTokenDTO;
 import com.modesty0310.matzip.dto.auth.response.RefreshTokenDTO;
 import com.modesty0310.matzip.dto.auth.response.SigninResponseDTO;
+import com.modesty0310.matzip.dto.auth.response.UpdateCategoryResponseDTO;
 import com.modesty0310.matzip.entity.User;
 import com.modesty0310.matzip.exception.CustomException;
 import com.modesty0310.matzip.mapper.AuthMapper;
@@ -16,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -112,5 +116,42 @@ public class AuthService {
 
     public void deleteAccount(Long userId) {
         authMapper.deleteAccount(userId);
+    }
+
+    public UpdateCategoryResponseDTO updateCategory(Map<MarkerColor, String> categories, User user) {
+        // Enum 값을 추출하여 사용
+        MarkerColor[] validColors = MarkerColor.values();
+
+        // 유효성 검사: 주어진 카테고리가 MarkerColor 배열에 존재하는지 확인
+        boolean isValid = categories.keySet().stream()
+                .allMatch(color -> {
+                    for (MarkerColor validColor : validColors) {
+                        if (validColor.equals(color)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+
+        if (!isValid) {
+            throw new IllegalArgumentException("유효하지 않은 카테고리입니다.");
+        }
+
+        // 사용자 객체에 카테고리 값 설정
+        user.setRed(categories.get(MarkerColor.RED));
+        user.setYellow(categories.get(MarkerColor.YELLOW));
+        user.setBlue(categories.get(MarkerColor.BLUE));
+        user.setGreen(categories.get(MarkerColor.GREEN));
+        user.setPurple(categories.get(MarkerColor.PURPLE));
+
+        try {
+            // 변경 사항을 저장
+            authMapper.updateCategory(user);
+        } catch (Exception e) {
+            throw new RuntimeException("카테고리 수정 도중 에러가 발생했습니다.");
+        }
+
+        // 비밀번호, 리프레시 토큰 제외 후 반환
+        return new UpdateCategoryResponseDTO(user);
     }
 }

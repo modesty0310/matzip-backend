@@ -52,4 +52,14 @@
         DELETE FROM user
         WHERE id = #{userId}
     </delete>
+
+    <update id="updateCategory">
+        UPDATE user
+        SET red = #{user.red},
+            yellow = #{user.yellow},
+            blue = #{user.blue},
+            green = #{user.green},
+            purple = #{user.purple}
+        WHERE id = #{user.userId}
+    </update>
 </mapper>
