@@ -1,6 +1,7 @@
 package com.modesty0310.matzip.mapper;
 
 import com.modesty0310.matzip.dto.auth.request.EditProfileDTO;
+import com.modesty0310.matzip.dto.auth.request.KakaoSignupDTO;
 import com.modesty0310.matzip.dto.auth.request.SignupRequestDTO;
 import com.modesty0310.matzip.dto.auth.request.UpdateHashedRefreshTokenDTO;
 import com.modesty0310.matzip.entity.User;
@@ -11,6 +12,8 @@ import org.apache.ibatis.annotations.Param;
 public interface AuthMapper {
 
     void signUp(SignupRequestDTO signupRequestDTO);
+
+    void kakaoSignUp(KakaoSignupDTO kakaoSignupDTO);
 
     boolean existsByEmail(String email);
 

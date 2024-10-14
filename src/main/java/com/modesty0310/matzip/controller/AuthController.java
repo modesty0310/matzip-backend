@@ -1,9 +1,6 @@
 package com.modesty0310.matzip.controller;
 
-import com.modesty0310.matzip.dto.auth.request.EditProfileDTO;
-import com.modesty0310.matzip.dto.auth.request.SigninRequestDTO;
-import com.modesty0310.matzip.dto.auth.request.SignupRequestDTO;
-import com.modesty0310.matzip.dto.auth.request.UpdateCategoryRequestDTO;
+import com.modesty0310.matzip.dto.auth.request.*;
 import com.modesty0310.matzip.dto.auth.response.GetProfileDTO;
 import com.modesty0310.matzip.dto.auth.response.RefreshTokenDTO;
 import com.modesty0310.matzip.dto.auth.response.SigninResponseDTO;
@@ -63,5 +60,10 @@ public class AuthController {
             @Valid @RequestBody UpdateCategoryRequestDTO updateCategoryDTO,
             @AuthenticationPrincipal User user) {
         return authService.updateCategory(updateCategoryDTO.getCategories(), user);
+    }
+
+    @PostMapping("/oauth/kakao")
+    public SigninResponseDTO kakaoLogin(@RequestBody String kakaoToken) {
+        return authService.kakaoLogin(kakaoToken);
     }
 }

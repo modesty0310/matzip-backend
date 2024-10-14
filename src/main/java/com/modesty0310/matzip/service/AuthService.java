@@ -3,10 +3,7 @@ package com.modesty0310.matzip.service;
 import com.modesty0310.matzip._enum.ErrorCode;
 import com.modesty0310.matzip._enum.MarkerColor;
 import com.modesty0310.matzip.config.JwtTokenProvider;
-import com.modesty0310.matzip.dto.auth.request.EditProfileDTO;
-import com.modesty0310.matzip.dto.auth.request.SigninRequestDTO;
-import com.modesty0310.matzip.dto.auth.request.SignupRequestDTO;
-import com.modesty0310.matzip.dto.auth.request.UpdateHashedRefreshTokenDTO;
+import com.modesty0310.matzip.dto.auth.request.*;
 import com.modesty0310.matzip.dto.auth.response.RefreshTokenDTO;
 import com.modesty0310.matzip.dto.auth.response.SigninResponseDTO;
 import com.modesty0310.matzip.dto.auth.response.UpdateCategoryResponseDTO;
@@ -14,10 +11,14 @@ import com.modesty0310.matzip.entity.User;
 import com.modesty0310.matzip.exception.CustomException;
 import com.modesty0310.matzip.mapper.AuthMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
@@ -28,6 +29,7 @@ public class AuthService {
     private final AuthMapper authMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RestTemplate restTemplate; // HTTP 요청을 위한 RestTemplate
 
     public void signUp(SignupRequestDTO signupRequestDTO) {
 
@@ -153,5 +155,70 @@ public class AuthService {
 
         // 비밀번호, 리프레시 토큰 제외 후 반환
         return new UpdateCategoryResponseDTO(user);
+    }
+
+    public SigninResponseDTO kakaoLogin(String kakaoToken) {
+        String url = "https://kapi.kakao.com/v2/user/me";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + kakaoToken);
+        headers.set("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+            Map<String, Object> userData = response.getBody();
+            String kakaoId = (String) userData.get("id");
+            Map<String, Object> kakaoAccount = (Map<String, Object>) userData.get("kakao_account");
+            String nickname = (String) ((Map<String, Object>) kakaoAccount.get("profile")).get("nickname");
+            String imageUri = ((String) ((Map<String, Object>) kakaoAccount.get("profile")).get("thumbnail_image_url")).replace("http:", "https:");
+
+            // User가 이미 존재하는지 확인
+            User existingUser = authMapper.getUserByEmail(kakaoId);
+            if (existingUser != null) {
+                // JWT 토큰 생성
+                String accessToken = jwtTokenProvider.generateToken(existingUser.getEmail(), true);
+                String refreshToken = jwtTokenProvider.generateToken(existingUser.getEmail(), false);
+
+                updateRefreshToken(refreshToken, existingUser.getId());
+
+                return SigninResponseDTO
+                        .builder()
+                        .accessToken(accessToken)
+                        .refreshToken(refreshToken)
+                        .build();
+            }
+
+            KakaoSignupDTO kakaoSignupDTO = KakaoSignupDTO
+                    .builder()
+                    .email(kakaoId)
+                    .password(nickname != null ? nickname : "")
+                    .nickname(nickname)
+                    .kakaoImageUri(imageUri)
+                    .loginType("kakao")
+                    .build();
+
+            try {
+                authMapper.kakaoSignUp(kakaoSignupDTO);
+            } catch (Exception e) {
+                throw new CustomException(ErrorCode.FAILED_KAKAO_SIGNUP);
+            }
+
+            // JWT 토큰 생성
+            String accessToken = jwtTokenProvider.generateToken(existingUser.getEmail(), true);
+            String refreshToken = jwtTokenProvider.generateToken(existingUser.getEmail(), false);
+
+            updateRefreshToken(refreshToken, existingUser.getId());
+
+            return SigninResponseDTO
+                    .builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .build();
+
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.KAKAO_SERVER_ERROR);
+        }
     }
 }
