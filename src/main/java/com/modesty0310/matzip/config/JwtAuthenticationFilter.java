@@ -71,7 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     request.setAttribute("user", user);
                 }
             }
-
+            System.out.println(email);
             filterChain.doFilter(request, response);
         } catch (CustomException e) {
             // Set the response status and content for unauthorized access

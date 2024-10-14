@@ -221,4 +221,9 @@ public class AuthService {
             throw new CustomException(ErrorCode.KAKAO_SERVER_ERROR);
         }
     }
+
+    // 나중에 개발 필요
+//    public SigninResponseDTO appleLogin(AppleLoginDTO appleLoginDTO) {
+//
+//    }
 }
