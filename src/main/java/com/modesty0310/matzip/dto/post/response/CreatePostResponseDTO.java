@@ -1,31 +1,44 @@
-package com.modesty0310.matzip.entity;
+package com.modesty0310.matzip.dto.post.response;
 
 import com.modesty0310.matzip._enum.MarkerColor;
-import lombok.AllArgsConstructor;
+import com.modesty0310.matzip.dto.image.ImageDTO;
+import com.modesty0310.matzip.entity.Favorite;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 import java.util.List;
 
+@Getter
+@Setter
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Post {
+public class CreatePostResponseDTO {
     private Long id;
+
     private Double latitude;
+
     private Double longitude;
+
     private MarkerColor color;
+
     private String address;
+
     private String title;
+
     private String description;
-    private Date date;
+
+    private Date date; // or LocalDateTime for better handling
+
     private Integer score;
+
     private Date createdAt;
+
     private Date updatedAt;
+
     private Date deletedAt;
-    private User user;
-    private List<Image> images;
+
+    private List<ImageDTO> images;
+
     private List<Favorite> favorites;
 }
-
