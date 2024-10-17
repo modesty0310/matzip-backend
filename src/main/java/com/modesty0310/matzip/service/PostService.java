@@ -3,6 +3,7 @@ package com.modesty0310.matzip.service;
 import com.modesty0310.matzip.dto.post.request.CreatePostRequestDTO;
 import com.modesty0310.matzip.dto.post.response.CreatePostResponseDTO;
 import com.modesty0310.matzip.dto.post.response.GetAllMarkersResponseDTO;
+import com.modesty0310.matzip.dto.post.response.GetPostByIdResponseDTO;
 import com.modesty0310.matzip.entity.Image;
 import com.modesty0310.matzip.entity.Post;
 import com.modesty0310.matzip.entity.User;
@@ -61,5 +62,9 @@ public class PostService {
         int limit = 10;
         int offset = (page - 1) * limit;
         return postMapper.getPosts(limit, offset, user.getId());
+    }
+
+    public GetPostByIdResponseDTO getPostById(long postId, User user) {
+        return postMapper.getPostWithFavoriteById(postId, user.getId());
     }
 }
