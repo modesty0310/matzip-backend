@@ -10,7 +10,8 @@ public enum ErrorCode {
     INVALID_JWT_TOKEN("권한이 없습니다.", HttpStatus.UNAUTHORIZED),
     NOTFOUND_USER("존재하지 않는 유저 입니다.", HttpStatus.NOT_FOUND),
     FAILED_KAKAO_SIGNUP("카카오 회원가입에 실패 하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-    KAKAO_SERVER_ERROR("Kakao 서버 에러가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+    KAKAO_SERVER_ERROR("Kakao 서버 에러가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    POST_NOT_FOUND("존재 하지 않는 피드입니다.", HttpStatus.NOT_FOUND),
     ;
 
     private final String message;

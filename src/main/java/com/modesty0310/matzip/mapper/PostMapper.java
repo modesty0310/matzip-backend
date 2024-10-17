@@ -20,5 +20,5 @@ public interface PostMapper {
 
     GetPostByIdResponseDTO getPostWithFavoriteById(Long postId, Long userId);
 
-    void deletePostById(Long postId, Long userId);
+    int deletePostById(Long postId, Long userId);
 }

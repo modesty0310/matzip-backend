@@ -1,5 +1,6 @@
 package com.modesty0310.matzip.service;
 
+import com.modesty0310.matzip._enum.ErrorCode;
 import com.modesty0310.matzip.dto.post.request.CreatePostRequestDTO;
 import com.modesty0310.matzip.dto.post.response.CreatePostResponseDTO;
 import com.modesty0310.matzip.dto.post.response.GetAllMarkersResponseDTO;
@@ -7,6 +8,7 @@ import com.modesty0310.matzip.dto.post.response.GetPostByIdResponseDTO;
 import com.modesty0310.matzip.entity.Image;
 import com.modesty0310.matzip.entity.Post;
 import com.modesty0310.matzip.entity.User;
+import com.modesty0310.matzip.exception.CustomException;
 import com.modesty0310.matzip.mapper.ImageMapper;
 import com.modesty0310.matzip.mapper.PostMapper;
 import lombok.RequiredArgsConstructor;
@@ -68,7 +70,11 @@ public class PostService {
         return postMapper.getPostWithFavoriteById(postId, user.getId());
     }
 
-    public void deletePost(long postId, User user) {
-        postMapper.deletePostById(postId, user.getId());
+    public Long deletePost(long postId, User user) {
+        int deletedRows = postMapper.deletePostById(postId, user.getId());
+        if (deletedRows < 1) {
+            throw new CustomException(ErrorCode.POST_NOT_FOUND);
+        }
+        return postId;
     }
 }
