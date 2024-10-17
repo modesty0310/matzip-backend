@@ -14,9 +14,9 @@
         WHERE user_id = #{userId}
     </select>
 
-    <insert id="createPost" parameterType="com.modesty0310.matzip.dto.post.request.CreatePostRequestDTO" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO post (latitude, longitude, color, address, title, description, date, score)
-        VALUES (#{latitude}, #{longitude}, #{color}, #{address}, #{title}, #{description}, #{date}, #{score})
+    <insert id="createPost" parameterType="com.modesty0310.matzip.entity.Post" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO post (latitude, longitude, color, address, title, description, date, score, user_id)
+        VALUES (#{latitude}, #{longitude}, #{color}, #{address}, #{title}, #{description}, #{date}, #{score}, #{user.id})
     </insert>
 
     <select id="getPosts" resultType="com.modesty0310.matzip.entity.Post">
