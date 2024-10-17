@@ -119,4 +119,10 @@
             <result property="updatedAt" column="imageUpdatedAt"/>
         </collection>
     </resultMap>
+
+    <delete id="deletePostById">
+        DELETE FROM post
+        WHERE id = #{postId}
+        AND user_id = #{userId}
+    </delete>
 </mapper>

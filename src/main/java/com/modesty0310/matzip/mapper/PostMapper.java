@@ -19,4 +19,6 @@ public interface PostMapper {
     CreatePostResponseDTO getPostWithImagesById(Long postId);
 
     GetPostByIdResponseDTO getPostWithFavoriteById(Long postId, Long userId);
+
+    void deletePostById(Long postId, Long userId);
 }

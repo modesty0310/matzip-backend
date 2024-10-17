@@ -41,4 +41,9 @@ public class PostController {
     public GetPostByIdResponseDTO getPostById(@AuthenticationPrincipal User user, @PathVariable("id") Long id) {
         return postService.getPostById(id, user);
     }
+
+    @DeleteMapping("/posts/{id}")
+    public void deletePostById(@AuthenticationPrincipal User user, @PathVariable("id") Long id) {
+        postService.deletePost(id, user);
+    }
 }

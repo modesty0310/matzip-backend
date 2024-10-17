@@ -67,4 +67,8 @@ public class PostService {
     public GetPostByIdResponseDTO getPostById(long postId, User user) {
         return postMapper.getPostWithFavoriteById(postId, user.getId());
     }
+
+    public void deletePost(long postId, User user) {
+        postMapper.deletePostById(postId, user.getId());
+    }
 }
