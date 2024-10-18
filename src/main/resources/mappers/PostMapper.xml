@@ -27,6 +27,13 @@
             LIMIT #{limit} OFFSET #{offset}
     </select>
 
+    <select id="getPostById" resultType="com.modesty0310.matzip.entity.Post">
+        SELECT *
+        FROM post
+        WHERE user_id = #{userId}
+        AND id = #{postId}
+    </select>
+
     <select id="getPostWithImagesById" resultMap="postWithImagesResultMap">
         SELECT
             p.id as id,
@@ -98,7 +105,7 @@
         GROUP BY p.id, i.id;
     </select>
 
-    <resultMap id="postWithFavoriteResultMap" type="com.modesty0310.matzip.dto.post.response.GetPostByIdResponseDTO">
+    <resultMap id="postWithFavoriteResultMap" type="com.modesty0310.matzip.dto.post.response.PostWithFavoriteResultDTO">
         <id property="id" column="id"/>
         <result property="latitude" column="latitude"/>
         <result property="longitude" column="longitude"/>
@@ -125,4 +132,15 @@
         WHERE id = #{postId}
         AND user_id = #{userId}
     </delete>
+
+    <update id="updatePost">
+        UPDATE post
+        SET
+            title = #{updatePostRequestDTO.title},
+            description = #{updatePostRequestDTO.description},
+            color = #{updatePostRequestDTO.color},
+            date = #{updatePostRequestDTO.date},
+            score = #{updatePostRequestDTO.score}
+        WHERE id = #{postId}
+    </update>
 </mapper>

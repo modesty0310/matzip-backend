@@ -6,4 +6,6 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ImageMapper {
     void createImage(Image image);
+
+    void deleteImageByPostId(Long postId);
 }

@@ -2,9 +2,10 @@ package com.modesty0310.matzip.service;
 
 import com.modesty0310.matzip._enum.ErrorCode;
 import com.modesty0310.matzip.dto.post.request.CreatePostRequestDTO;
+import com.modesty0310.matzip.dto.post.request.UpdatePostRequestDTO;
 import com.modesty0310.matzip.dto.post.response.CreatePostResponseDTO;
 import com.modesty0310.matzip.dto.post.response.GetAllMarkersResponseDTO;
-import com.modesty0310.matzip.dto.post.response.GetPostByIdResponseDTO;
+import com.modesty0310.matzip.dto.post.response.PostWithFavoriteResultDTO;
 import com.modesty0310.matzip.entity.Image;
 import com.modesty0310.matzip.entity.Post;
 import com.modesty0310.matzip.entity.User;
@@ -66,7 +67,7 @@ public class PostService {
         return postMapper.getPosts(limit, offset, user.getId());
     }
 
-    public GetPostByIdResponseDTO getPostById(long postId, User user) {
+    public PostWithFavoriteResultDTO getPostById(long postId, User user) {
         return postMapper.getPostWithFavoriteById(postId, user.getId());
     }
 
@@ -76,5 +77,29 @@ public class PostService {
             throw new CustomException(ErrorCode.POST_NOT_FOUND);
         }
         return postId;
+    }
+
+    public PostWithFavoriteResultDTO updatePost(long postId, UpdatePostRequestDTO updatePostDto, User user) {
+        Post post = postMapper.getPostById(postId, user.getId());
+        if (post == null) {
+            throw new CustomException(ErrorCode.POST_NOT_FOUND);
+        }
+
+        postMapper.updatePost(updatePostDto, postId);
+
+        // 기존 이미지 지우기
+        imageMapper.deleteImageByPostId(postId);
+
+        // Now map imageUris to Image entities
+        List<Image> images = updatePostDto.getImageUris().stream()
+                .map(uriDTO -> new Image(uriDTO.getUri(), post))
+                .collect(Collectors.toList());
+
+        // Save the images
+        for (Image image : images) {
+            imageMapper.createImage(image);
+        }
+
+        return postMapper.getPostWithFavoriteById(post.getId(), user.getId());
     }
 }

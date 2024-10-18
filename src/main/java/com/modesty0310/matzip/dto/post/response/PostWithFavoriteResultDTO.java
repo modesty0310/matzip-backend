@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class GetPostByIdResponseDTO {
+public class PostWithFavoriteResultDTO {
     private Long id;
 
     private Double latitude;

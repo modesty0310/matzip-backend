@@ -1,9 +1,10 @@
 package com.modesty0310.matzip.controller;
 
 import com.modesty0310.matzip.dto.post.request.CreatePostRequestDTO;
+import com.modesty0310.matzip.dto.post.request.UpdatePostRequestDTO;
 import com.modesty0310.matzip.dto.post.response.CreatePostResponseDTO;
 import com.modesty0310.matzip.dto.post.response.GetAllMarkersResponseDTO;
-import com.modesty0310.matzip.dto.post.response.GetPostByIdResponseDTO;
+import com.modesty0310.matzip.dto.post.response.PostWithFavoriteResultDTO;
 import com.modesty0310.matzip.entity.Post;
 import com.modesty0310.matzip.entity.User;
 import com.modesty0310.matzip.service.PostService;
@@ -38,12 +39,17 @@ public class PostController {
     }
 
     @GetMapping("/posts/{id}")
-    public GetPostByIdResponseDTO getPostById(@AuthenticationPrincipal User user, @PathVariable("id") Long id) {
+    public PostWithFavoriteResultDTO getPostById(@AuthenticationPrincipal User user, @PathVariable("id") Long id) {
         return postService.getPostById(id, user);
     }
 
     @DeleteMapping("/posts/{id}")
     public Long deletePostById(@AuthenticationPrincipal User user, @PathVariable("id") Long id) {
         return postService.deletePost(id, user);
+    }
+
+    @PatchMapping("/posts/{id}")
+    public PostWithFavoriteResultDTO updatePost(@AuthenticationPrincipal User user, @PathVariable("id") Long id, @RequestBody UpdatePostRequestDTO updatePostRequestDTO) {
+        return postService.updatePost(id, updatePostRequestDTO, user);
     }
 }

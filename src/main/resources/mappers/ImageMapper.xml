@@ -7,4 +7,10 @@
         INSERT INTO image (uri, post_id)
         VALUES (#{uri}, #{post.id})
     </insert>
+
+    <delete id="deleteImageByPostId">
+        DELETE FROM image
+        WHERE post_id = #{postId}
+    </delete>
+
 </mapper>
