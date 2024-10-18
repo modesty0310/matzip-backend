@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.modesty0310.matzip.mapper.PostMapper">
+    <select id="getAllMarkers" parameterType="Long" resultType="com.modesty0310.matzip.dto.post.response.GetAllMarkersResponseDTO">
+        SELECT
+            id,
+            latitude,
+            longitude,
+            color,
+            score
+        FROM post
+        WHERE user_id = #{userId}
+    </select>
+
+    <insert id="createPost" parameterType="com.modesty0310.matzip.entity.Post" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO post (latitude, longitude, color, address, title, description, date, score, user_id)
+        VALUES (#{latitude}, #{longitude}, #{color}, #{address}, #{title}, #{description}, #{date}, #{score}, #{user.id})
+    </insert>
+
+    <select id="getPosts" resultType="com.modesty0310.matzip.entity.Post">
+        SELECT *
+        FROM post
+        WHERE user_id = #{userId}
+        ORDER BY created_at DESC
+            LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="getPostById" resultType="com.modesty0310.matzip.entity.Post">
+        SELECT *
+        FROM post
+        WHERE user_id = #{userId}
+        AND id = #{postId}
+    </select>
+
+    <select id="getPostWithImagesById" resultMap="postWithImagesResultMap">
+        SELECT
+            p.id as id,
+            p.latitude as latitude,
+            p.longitude as longitude,
+            p.color as color,
+            p.address as address,
+            p.title as title,
+            p.description as description,
+            p.date as date,
+            p.created_at as createdAt,
+            p.updated_at as updatedAt,
+            p.deleted_at as deletedAt,
+            p.score as score,
+            i.id as imageId,
+            i.uri as imageUri,
+            i.created_at as imageCreatedAt,
+            i.updated_at as imageUpdatedAt
+        FROM post p
+            LEFT JOIN image i ON p.id = i.post_id
+        WHERE p.id = #{postId}
+    </select>
+
+    <resultMap id="postWithImagesResultMap" type="com.modesty0310.matzip.dto.post.response.CreatePostResponseDTO">
+        <id property="id" column="id"/>
+        <result property="latitude" column="latitude"/>
+        <result property="longitude" column="longitude"/>
+        <result property="color" column="color"/>
+        <result property="address" column="address"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="date" column="date"/>
+        <result property="score" column="score"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+
+        <collection property="images" ofType="com.modesty0310.matzip.dto.image.ImageDTO">
+            <result property="id" column="imageId"/>
+            <result property="uri" column="imageUri"/>
+            <result property="createdAt" column="imageCreatedAt"/>
+            <result property="updatedAt" column="imageUpdatedAt"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="getPostWithFavoriteById" resultMap="postWithFavoriteResultMap">
+        SELECT
+            p.id as id,
+            p.latitude as latitude,
+            p.longitude as longitude,
+            p.color as color,
+            p.address as address,
+            p.title as title,
+            p.description as description,
+            p.date as date,
+            p.created_at as createdAt,
+            p.updated_at as updatedAt,
+            p.deleted_at as deletedAt,
+            p.score as score,
+            COUNT(f.id) > 0 AS isFavorite,
+            i.id as imageId,
+            i.uri as imageUri,
+            i.created_at as imageCreatedAt,
+            i.updated_at as imageUpdatedAt
+        FROM post p
+            LEFT JOIN image i ON p.id = i.post_id
+            LEFT JOIN favorite f ON p.id = f.post_id AND f.user_id = #{userId}
+        WHERE p.id = #{postId}
+        GROUP BY p.id, i.id;
+    </select>
+
+    <resultMap id="postWithFavoriteResultMap" type="com.modesty0310.matzip.dto.post.response.PostWithFavoriteResultDTO">
+        <id property="id" column="id"/>
+        <result property="latitude" column="latitude"/>
+        <result property="longitude" column="longitude"/>
+        <result property="color" column="color"/>
+        <result property="address" column="address"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="date" column="date"/>
+        <result property="score" column="score"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+        <result property="isFavorite" column="isFavorite"/>
+
+        <collection property="images" ofType="com.modesty0310.matzip.dto.image.ImageDTO">
+            <result property="id" column="imageId"/>
+            <result property="uri" column="imageUri"/>
+            <result property="createdAt" column="imageCreatedAt"/>
+            <result property="updatedAt" column="imageUpdatedAt"/>
+        </collection>
+    </resultMap>
+
+    <delete id="deletePostById">
+        DELETE FROM post
+        WHERE id = #{postId}
+        AND user_id = #{userId}
+    </delete>
+
+    <update id="updatePost">
+        UPDATE post
+        SET
+            title = #{updatePostRequestDTO.title},
+            description = #{updatePostRequestDTO.description},
+            color = #{updatePostRequestDTO.color},
+            date = #{updatePostRequestDTO.date},
+            score = #{updatePostRequestDTO.score}
+        WHERE id = #{postId}
+    </update>
+</mapper>
