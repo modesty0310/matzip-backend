@@ -3,9 +3,7 @@ package com.modesty0310.matzip.service;
 import com.modesty0310.matzip._enum.ErrorCode;
 import com.modesty0310.matzip.dto.post.request.CreatePostRequestDTO;
 import com.modesty0310.matzip.dto.post.request.UpdatePostRequestDTO;
-import com.modesty0310.matzip.dto.post.response.CreatePostResponseDTO;
-import com.modesty0310.matzip.dto.post.response.GetAllMarkersResponseDTO;
-import com.modesty0310.matzip.dto.post.response.PostWithFavoriteResultDTO;
+import com.modesty0310.matzip.dto.post.response.*;
 import com.modesty0310.matzip.entity.Image;
 import com.modesty0310.matzip.entity.Post;
 import com.modesty0310.matzip.entity.User;
@@ -16,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -101,5 +100,16 @@ public class PostService {
         }
 
         return postMapper.getPostWithFavoriteById(post.getId(), user.getId());
+    }
+
+    public Map<Integer, List<GetPostByMonthDTO>> getPostByMonth(int year, int month, User user) {
+        List<GetPostByMonthDTO> posts = postMapper.getPostByMonth(year, month, user.getId());
+        System.out.println("Posts: " + posts);
+        System.out.println("Month: " + month);
+        System.out.println("Year: " + year);
+        System.out.println("UserId: " + user.getId());
+        // 날짜(day)를 기준으로 데이터를 그룹화
+        return posts.stream()
+                .collect(Collectors.groupingBy(GetPostByMonthDTO::getDay));
     }
 }
