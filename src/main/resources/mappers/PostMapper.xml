@@ -143,4 +143,16 @@
             score = #{updatePostRequestDTO.score}
         WHERE id = #{postId}
     </update>
+
+    <select id="getPostByMonth" resultType="com.modesty0310.matzip.dto.post.response.GetPostByMonthDTO">
+        SELECT
+            id,
+            title,
+            address,
+            DAY(`date`) as day
+        FROM post
+        WHERE user_id = #{userId}
+        AND YEAR(`date`) = #{year}
+        AND MONTH(`date`) = #{month}
+    </select>
 </mapper>
