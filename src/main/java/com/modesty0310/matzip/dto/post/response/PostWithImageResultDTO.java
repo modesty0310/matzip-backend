@@ -2,7 +2,6 @@ package com.modesty0310.matzip.dto.post.response;
 
 import com.modesty0310.matzip._enum.MarkerColor;
 import com.modesty0310.matzip.dto.image.ImageDTO;
-import com.modesty0310.matzip.entity.Favorite;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @Data
-public class CreatePostResponseDTO {
+public class PostWithImageResultDTO {
     private Long id;
 
     private Double latitude;

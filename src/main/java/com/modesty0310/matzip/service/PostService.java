@@ -2,6 +2,7 @@ package com.modesty0310.matzip.service;
 
 import com.modesty0310.matzip._enum.ErrorCode;
 import com.modesty0310.matzip.dto.post.request.CreatePostRequestDTO;
+import com.modesty0310.matzip.dto.post.request.SearchMyPostsByTitleAndAddressDTO;
 import com.modesty0310.matzip.dto.post.request.UpdatePostRequestDTO;
 import com.modesty0310.matzip.dto.post.response.*;
 import com.modesty0310.matzip.entity.Image;
@@ -33,7 +34,7 @@ public class PostService {
         return markers;
     }
 
-    public CreatePostResponseDTO createPost(CreatePostRequestDTO createPostDto, User user) {
+    public PostWithImageResultDTO createPost(CreatePostRequestDTO createPostDto, User user) {
         Post post = new Post();
         post.setLatitude(createPostDto.getLatitude());
         post.setLongitude(createPostDto.getLongitude());
@@ -111,5 +112,9 @@ public class PostService {
         // 날짜(day)를 기준으로 데이터를 그룹화
         return posts.stream()
                 .collect(Collectors.groupingBy(GetPostByMonthDTO::getDay));
+    }
+
+    public List<PostWithImageResultDTO> searchMyPostsByTitleAndAddress(SearchMyPostsByTitleAndAddressDTO searchMyPostsByTitleAndAddressDTO) {
+        return postMapper.searchMyPostsByTitleAndAddress(searchMyPostsByTitleAndAddressDTO);
     }
 }
