@@ -38,7 +38,7 @@ public class ImageService {
                 uris.add(filename);
             } catch (IOException e) {
                 System.out.println(e.getMessage());
-                throw new CustomException(ErrorCode.FAILD_IMAGE_UPLOAD);
+                throw new CustomException(ErrorCode.FAILED_IMAGE_UPLOAD);
             }
         }
         return uris;

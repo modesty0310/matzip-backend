@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.modesty0310.matzip.mapper.FavoriteMapper">
+
+    <select id="getPostByMyFavorite" resultMap="postWithImagesResultMap">
+        SELECT
+            p.id as id,
+            p.latitude as latitude,
+            p.longitude as longitude,
+            p.color as color,
+            p.address as address,
+            p.title as title,
+            p.description as description,
+            p.date as date,
+            p.created_at as createdAt,
+            p.updated_at as updatedAt,
+            p.deleted_at as deletedAt,
+            p.score as score,
+            i.id as imageId,
+            i.uri as imageUri,
+            i.created_at as imageCreatedAt,
+            i.updated_at as imageUpdatedAt
+        FROM favorite as f
+        INNER JOIN post p ON f.post_id = p.id
+        LEFT JOIN image i ON p.id = i.post_id
+        WHERE f.user_id = #{userId}
+        ORDER BY p.date DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <resultMap id="postWithImagesResultMap" type="com.modesty0310.matzip.dto.favorite.response.PostWithImageResultDTO">
+        <id property="id" column="id"/>
+        <result property="latitude" column="latitude"/>
+        <result property="longitude" column="longitude"/>
+        <result property="color" column="color"/>
+        <result property="address" column="address"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="date" column="date"/>
+        <result property="score" column="score"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+
+        <collection property="images" ofType="com.modesty0310.matzip.dto.image.ImageDTO">
+            <result property="id" column="imageId"/>
+            <result property="uri" column="imageUri"/>
+            <result property="createdAt" column="imageCreatedAt"/>
+            <result property="updatedAt" column="imageUpdatedAt"/>
+        </collection>
+    </resultMap>
+
+    <select id="getFavoriteByPostIdAndUserId" resultType="com.modesty0310.matzip.entity.Favorite">
+        SELECT * 
+        FROM favorite
+        WHERE post_id = #{postId}
+        AND user_id = #{userId}
+    </select>
+    
+    <delete id="deleteFavoriteByPostIdAndUserId">
+        DELETE FROM favorite
+        WHERE post_id = #{postId}
+        AND user_id = #{userId}
+    </delete>
+    
+    <insert id="createFavorite">
+        INSERT INTO favorite (post_id, user_id)
+        VALUES (#{postId}, #{userId})
+    </insert>
+</mapper>
