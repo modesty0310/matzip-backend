@@ -12,6 +12,9 @@ public enum ErrorCode {
     FAILED_KAKAO_SIGNUP("카카오 회원가입에 실패 하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     KAKAO_SERVER_ERROR("Kakao 서버 에러가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     POST_NOT_FOUND("존재 하지 않는 피드입니다.", HttpStatus.NOT_FOUND),
+    OVER_MAX_FILE_COUNT("최대 파일 개수는 5개입니다.", HttpStatus.BAD_REQUEST),
+    FAILED_IMAGE_UPLOAD("파일 업로드에 실패 하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    NOTFOUND_POST("존재하지 않는 게시글 입니다.", HttpStatus.NOT_FOUND),
     ;
 
     private final String message;

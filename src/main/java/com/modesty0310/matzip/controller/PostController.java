@@ -1,8 +1,9 @@
 package com.modesty0310.matzip.controller;
 
 import com.modesty0310.matzip.dto.post.request.CreatePostRequestDTO;
+import com.modesty0310.matzip.dto.post.request.SearchMyPostsByTitleAndAddressDTO;
 import com.modesty0310.matzip.dto.post.request.UpdatePostRequestDTO;
-import com.modesty0310.matzip.dto.post.response.CreatePostResponseDTO;
+import com.modesty0310.matzip.dto.post.response.PostWithImageResultDTO;
 import com.modesty0310.matzip.dto.post.response.GetAllMarkersResponseDTO;
 import com.modesty0310.matzip.dto.post.response.GetPostByMonthDTO;
 import com.modesty0310.matzip.dto.post.response.PostWithFavoriteResultDTO;
@@ -31,7 +32,7 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public CreatePostResponseDTO createPost(@AuthenticationPrincipal User user, @Valid @RequestBody CreatePostRequestDTO createPostRequestDTO) {
+    public PostWithImageResultDTO createPost(@AuthenticationPrincipal User user, @Valid @RequestBody CreatePostRequestDTO createPostRequestDTO) {
         System.out.println(createPostRequestDTO.toString());
         return postService.createPost(createPostRequestDTO, user);
     }
@@ -52,17 +53,38 @@ public class PostController {
     }
 
     @PatchMapping("/posts/{id}")
-    public PostWithFavoriteResultDTO updatePost(@AuthenticationPrincipal User user, @PathVariable("id") Long id, @RequestBody UpdatePostRequestDTO updatePostRequestDTO) {
+    public PostWithFavoriteResultDTO updatePost(
+            @AuthenticationPrincipal User user,
+            @PathVariable("id") Long id,
+            @RequestBody UpdatePostRequestDTO updatePostRequestDTO) {
         return postService.updatePost(id, updatePostRequestDTO, user);
     }
 
     @GetMapping("/posts")
     public ResponseEntity<Map<Integer, List<GetPostByMonthDTO>>> getPostsByMonth(
-            @RequestParam int year,
-            @RequestParam int month,
+            @RequestParam("year") int year,
+            @RequestParam("month") int month,
             @AuthenticationPrincipal User user
     ) {
         Map<Integer, List<GetPostByMonthDTO>> postsGroupedByDay = postService.getPostByMonth(year, month, user);
         return ResponseEntity.ok(postsGroupedByDay);
+    }
+
+    @GetMapping("/posts/my/search")
+    public List<PostWithImageResultDTO> searchMyPostsByTitleAndAddress(
+            @RequestParam("query") String search,
+            @RequestParam("page") int page,
+            @AuthenticationPrincipal User user
+    ) {
+        int limit = 10;
+        SearchMyPostsByTitleAndAddressDTO dto = SearchMyPostsByTitleAndAddressDTO
+                .builder()
+                .limit(limit)
+                .offset((page - 1) * limit)
+                .search(search)
+                .userId(user.getId())
+                .build();
+
+        return postService.searchMyPostsByTitleAndAddress(dto);
     }
 }

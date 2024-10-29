@@ -51,4 +51,11 @@ public class CustomExceptionHandler {
 
         return new ResponseEntity<>(response, ex.getStatus());
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleException(Exception e) {
+        // 예외 메시지를 로깅하거나 필요에 따라 다른 처리를 추가
+        System.out.println("Exception caught: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied: " + e.getMessage());
+    }
 }
